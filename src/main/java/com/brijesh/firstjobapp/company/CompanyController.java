@@ -31,7 +31,11 @@ public class CompanyController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Company> getCompanyById(@PathVariable Long id){
-        return new ResponseEntity<>(companyService.getCompanyById(id),HttpStatus.OK);
+        Company company = companyService.getCompanyById(id);
+        if (company != null){
+            return new ResponseEntity<>(company, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @PutMapping("/{id}")
