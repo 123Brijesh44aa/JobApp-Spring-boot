@@ -10,7 +10,7 @@ import java.util.List;
 @RequestMapping("/companies/{companyId}")
 public class ReviewController {
 
-    private ReviewService reviewService;
+    private final ReviewService reviewService;
 
     public ReviewController(ReviewService reviewService){
         this.reviewService = reviewService;
@@ -18,13 +18,31 @@ public class ReviewController {
 
     @PostMapping("/reviews")
     public ResponseEntity<String> createReview(@RequestBody Review review, @PathVariable Long companyId){
-        reviewService.createReview(review,companyId);
-        return new ResponseEntity<>("Review Added Successfully",HttpStatus.CREATED);
+        if (reviewService.createReview(review,companyId)) {
+            return new ResponseEntity<>("Review Added Successfully", HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>("Review Creation Unsuccessful", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping("/reviews")
     public ResponseEntity<List<Review>> getAllReviewsOfASpecificCompany(@PathVariable Long companyId){
         return new ResponseEntity<>(reviewService.getAllReviews(companyId), HttpStatus.OK);
+    }
+
+    @GetMapping("/reviews/{reviewId}")
+    public ResponseEntity<Review> getReviewOfASpecificCompany(@PathVariable Long companyId, @PathVariable Long reviewId){
+        return new ResponseEntity<>(reviewService.getReviewOfASpecificCompany(companyId,reviewId),HttpStatus.OK);
+    }
+
+    @PutMapping("/reviews/{reviewId}")
+    public ResponseEntity<String> editReview(@PathVariable Long companyId, @PathVariable Long reviewId, @RequestBody Review updatedReview){
+        Boolean isReviewUpdated = reviewService.editReview(companyId,reviewId,updatedReview);
+        if (isReviewUpdated){
+            return new ResponseEntity<>("Review updated successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 }
 
