@@ -1,5 +1,6 @@
 package com.brijesh.firstjobapp.review;
 
+import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +41,16 @@ public class ReviewController {
         Boolean isReviewUpdated = reviewService.editReview(companyId,reviewId,updatedReview);
         if (isReviewUpdated){
             return new ResponseEntity<>("Review updated successfully", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/reviews/{reviewId}")
+    public ResponseEntity<String> deleteReview(@PathVariable Long companyId, @PathVariable Long reviewId){
+        Boolean isReviewDeleted = reviewService.isReviewDeleted(companyId,reviewId);
+        if (isReviewDeleted){
+            return new ResponseEntity<>("Review Deleted successfully", HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
