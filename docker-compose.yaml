@@ -1,0 +1,33 @@
+
+services:
+  mysqldb:
+    image: mysql
+    container_name: mysql-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: Naruto
+      MYSQL_DATABASE: job_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - jobapp-network
+
+  db-manager:
+    image: adminer
+    container_name: adminer-ui
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    networks:
+      - jobapp-network
+    depends_on:
+      - mysqldb
+
+networks:
+  jobapp-network:
+    driver: bridge
+
+volumes:
+  db_data:
